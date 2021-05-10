@@ -90,7 +90,7 @@ Try {
 	If ( -not ($telegrafDest | Test-Path)) {
 
 		If($PSCmdlet.ShouldProcess(
-			"Create $telegrafDest and $telegrafConfDestDir",
+			"Create `"$telegrafDest`" and `"$telegrafConfDestDir`".",
 			$env:computername,
 			"Create destination directories")
 		)
@@ -115,7 +115,7 @@ Try {
 		# Overwrite agent if no match
 		If ( -not $binaryMatch ) {
 			If($PSCmdlet.ShouldProcess(
-				"Overwrite agent in destination",
+				"Overwrite agent in destination.",
 				$env:computername,
 				"Update agent")
 			)
@@ -136,7 +136,7 @@ Try {
 	Else {
 		# Copy agent if no exist
 		If($PSCmdlet.ShouldProcess(
-			"Copy $($telegrafConfSource.binary) to $($telegrafConfDest.binary)",
+			"Copy Telegraf agent to destination.",
 			$env:computername,
 			"Copy agent")
 			)
@@ -155,7 +155,7 @@ Try {
 		# Overwrite base config if no match
 		If ( -not ($baseConfMatch)) {
 			If($PSCmdlet.ShouldProcess(
-				"Overwrite $($telegrafConfDest.base) with $($telegrafConfSource.base)",
+				"Overwrite base configuration in destination.",
 				$env:computername,
 				"Update base configuration")
 				)
@@ -176,7 +176,7 @@ Try {
 	## Copy base config if no exist
 	Else {
 		If($PSCmdlet.ShouldProcess(
-			"Copy $($telegrafConfSource.base) to $($telegrafConfDest.base)",
+			"Copy base configuration to destination.",
 			$env:computername,
 			"Install base configuration")
 			)
@@ -195,7 +195,7 @@ Try {
 		# Overwrite system metrics config if no match
 		If ( -not ($sysMetricsConfMatch)) {
 			If($PSCmdlet.ShouldProcess(
-				"Overwrite $($telegrafConfDest.sysMetrics) with $($telegrafConfSource.sysMetrics)",
+				"Overwrite system metrics configuration in destination.",
 				$env:computername,
 				"Update system metrics configuration")
 				)
@@ -216,7 +216,7 @@ Try {
 	## Copy system metrics config if no exist
 	Else {
 		If($PSCmdlet.ShouldProcess(
-			"Copy $($telegrafConfSource.sysMetrics) to $($telegrafConfDest.sysMetrics)",
+			"Copy system metrics configuration to destination.",
 			$env:computername,
 			"Install system metrics configuration")
 			)
@@ -241,7 +241,7 @@ Try {
 			$addsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.adds)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.adds)).Hash
 			If ( -not $addsConfMatch ) {
 				If($PSCmdlet.ShouldProcess(
-					"Overwrite $($telegrafConfDest.adds) with $($telegrafConfSource.adds)",
+					"Overwrite AD DS metrics configuration in destination.",
 					$env:computername,
 					"Update Active Directory Domain Services metrics configuration")
 					)
@@ -262,7 +262,7 @@ Try {
 		Else {
 
 			If($PSCmdlet.ShouldProcess(
-				"Copy $($telegrafConfSource.adds) to $($telegrafConfDest.adds)",
+				"Copy AD DS metrics configuration to destination.",
 				$env:computername,
 				"Install Active Directory Domain Services metrics configuration")
 				)
@@ -284,7 +284,7 @@ Try {
 			$dnsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dns)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dns)).Hash
 			If ( -not $dnsConfMatch ) {
 				If($PSCmdlet.ShouldProcess(
-					"Overwrite $($telegrafConfDest.dns) with $($telegrafConfSource.dns)",
+					"Overwrite DNS metrics configuration in destination.",
 					$env:computername,
 					"Update DNS metrics configuration")
 					)
@@ -305,7 +305,7 @@ Try {
 		Else {
 
 			If($PSCmdlet.ShouldProcess(
-				"Copy $($telegrafConfSource.dns) to $($telegrafConfDest.dns)",
+				"Copy DNS metrics configuration to destination.",
 				$env:computername,
 				"Install DNS metrics configuration")
 				)
@@ -329,7 +329,7 @@ Try {
 
 			If ( -not $dfsrConfMatch ) {
 				If($PSCmdlet.ShouldProcess(
-					"Overwrite $($telegrafConfDest.dfsr) with $($telegrafConfSource.dfsr)",
+					"Overwrite DFSR metrics configuration in destination.",
 					$env:computername,
 					"Update DFSR metrics configuration")
 					)
@@ -350,7 +350,7 @@ Try {
 		Else {
 
 			If($PSCmdlet.ShouldProcess(
-				"Copy $($telegrafConfSource.dfsr) to $($telegrafConfDest.dfsr)",
+				"Copy DFSR metrics configuration to destination.",
 				$env:computername,
 				"Install DFSR metrics configuration")
 				)
@@ -373,7 +373,7 @@ Try {
 			If ( -not $dfsnConfMatch ) {
 
 				If($PSCmdlet.ShouldProcess(
-					"Overwrite $($telegrafConfDest.dfsn) with $($telegrafConfSource.dfsn)",
+					"Overwrite DFSN metrics configuration in destination.",
 					$env:computername,
 					"Update DFSN metrics configuration")
 					)
@@ -394,7 +394,7 @@ Try {
 		Else {
 
 			If($PSCmdlet.ShouldProcess(
-				"Copy $($telegrafConfSource.dfsn) to $($telegrafConfDest.dfsn)",
+				"Copy DFSN metrics configuration to destination.",
 				$env:computername,
 				"Install DFSN metrics configuration")
 				)
@@ -415,7 +415,7 @@ Catch {
 # Test config if anything has changed
 If (($created -gt 0) -or ($updated -gt 0)) {
 	If($PSCmdlet.ShouldProcess(
-		"Test all new/updated Telegraf configurations)",
+		"Test all new/updated Telegraf configurations.",
 		$env:computername,
 		"Test Telegraf configuration")
 		)
@@ -444,7 +444,7 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 	## If config test success but service not exist
 	Elseif (($LastExitCode -eq '0') -and (-not (Get-Service Telegraf -ErrorAction SilentlyContinue))) {
 		If($PSCmdlet.ShouldProcess(
-			"Install Telegraf as system service and start",
+			"Install and start Telegraf system service.",
 			$env:computername,
 			"Install Telegraf service")
 			)
@@ -474,7 +474,7 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 	## If config test success and service exist
 	Elseif (($LastExitCode -eq '0') -and (Get-Service Telegraf -ErrorAction SilentlyContinue)) {
 		If($PSCmdlet.ShouldProcess(
-			"Restart Telegraf service",
+			"Restart Telegraf service.",
 			$env:computername,
 			"Restart Telegraf service")
 			)
