@@ -1,19 +1,21 @@
 # Telegraf Deployment Script
 
-This is a Telegraf deployment script for Windows environments.
+This is a Telegraf deployment script for Windows Server* environments.
 
-The script will install a base configuration which includes your output plugin and a comprehensive system metrics input plugin configuration, then it will scan the system to determine candidacy for additional configuration as follows:
+The script will install a base configuration which includes your output plugin and a comprehensive system metrics input plugin configuration.  
+It will then scan the system to determine candidacy for additional input plugins as follows:
 
 | Role                             	| Configuration Applied  	|
 |----------------------------------	|------------------------	|
-| Active Directory Domain Services 	| `telegraf-adds.conf` * 	|
+| Active Directory Domain Services 	| `telegraf-adds.conf` ** 	|
 | DFS Namespaces                   	| `telegraf-dfsn.conf`   	|
 | DFS Replication                  	| `telegraf-dfsr.conf`   	|
 | DNS Server                       	| `telegraf-dns.conf`    	|
 
-\* Typically, but not always, all of the above configurations are applied to domain controllers since they commonly have all of the mentioned roles installed.
+Suggested script deployment method: Group Policy computer start-up script.
 
-Suggested script deployment method: Group Policy computer  start-up script.
+\* While this script is primarily designed for Windows Server, it will still work for Windows clients, the only difference being the additional configurations in the table above will never be installed (i.e. only the output plugin and system metrics input plugin).  
+\** All of the above configurations are typically (but not always) applied to domain controllers since they commonly have all of the mentioned roles installed.
 
 ## Requirements
 
