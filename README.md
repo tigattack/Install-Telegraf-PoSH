@@ -11,7 +11,7 @@ The script will install a base configuration which includes your output plugin a
 | DFS Replication                  	| `telegraf-dfsr.conf`   	|
 | DNS Server                       	| `telegraf-dns.conf`    	|
 
-\* Typically, but not always, all of the above also applied to a domain controller since all of the mentioned roles are commonly found on domain controllers.
+\* Typically, but not always, all of the above configurations are applied to domain controllers since they commonly have all of the mentioned roles installed.
 
 Suggested script deployment method: Group Policy computer  start-up script.
 
