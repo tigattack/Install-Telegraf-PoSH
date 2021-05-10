@@ -95,7 +95,12 @@ $updated = 0
 $ignored = 0
 
 # Start logging
-Start-Transcript -Path $LogPath -OutVariable transcript | Out-Null
+Try {
+	Start-Transcript -Path $LogPath -OutVariable transcript | Out-Null
+}
+Catch {
+	Write-Warning $_.Exception.Message
+}
 
 # Check files and copy/overwrite if necessary.
 Try {
