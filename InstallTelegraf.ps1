@@ -409,7 +409,7 @@ Catch {
 }
 
 # Test config if anything has changed
-If (($created -gt 0) -or ($updated -gt 0)) {
+If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 	If($PSCmdlet.ShouldProcess(
 		"$telegrafDest\*",
 		"Test configuration")
@@ -489,19 +489,21 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 		}
 	}
 
-	# Output result
-	$result = @{
-		'Created' = $created;
-		'Updated' = $updated;
-		'Ignored' = $ignored
+	If (($created -gt 0) -or ($updated -gt 0)) {
+		# Output result
+		$result = @{
+			'Created' = $created;
+			'Updated' = $updated;
+			'Ignored' = $ignored
+		}
+		Write-Output "`nSuccessfully completed. Status:"
+			$($result.Keys |
+			Select-Object @{Label='Action';Expression={$_}},@{Label='Count';Expression={$result.$_}} |
+			Format-Table -AutoSize)
 	}
-	Write-Output "`nSuccessfully completed. Status:"
-		$($result.Keys |
-		Select-Object @{Label='Action';Expression={$_}},@{Label='Count';Expression={$result.$_}} |
-		Format-Table -AutoSize)
 }
 
-Else {
+Elseif ($WhatIfPreference -eq $false) {
 	Write-Output "`nTelegraf agent and configuration is all up to date. No action taken.`n"
 }
 
