@@ -7,9 +7,13 @@
   Path to network share (or other) containing Telegraf source (agent, configurations, etc.).
   Defaults to the script's parent directory.
 .PARAMETER Destination
-  Path to Telegraf destination directory. Defaults to C:\Program Files\Telegraf
+  Path to Telegraf destination directory. Defaults to 'C:\Program Files\Telegraf'.
+.PARAMETER ServiceName
+  Telegraf service name. Defaults to 'telegraf'.
+.PARAMETER ServiceDisplayName
+  Telegraf service display name. Defaults to 'Telegraf'.
 .PARAMETER LogPath
-  Path to log file. Defaults to C:\InstallTelegraf.log
+  Path to log file. Defaults to 'C:\InstallTelegraf.log'.
 .PARAMETER WhatIf
   PowerShell default WhatIf param.
 .PARAMETER Confirm
@@ -39,6 +43,12 @@ param (
 	[Alias('Destination')]
     [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$telegrafDest = "C:\Program Files\Telegraf",
+
+    [Parameter(Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
+    [string]$ServiceName = "telegraf",
+
+    [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
+    [string]$ServiceDisplayName = "Telegraf",
 
     [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$LogPath = "C:\InstallTelegraf.log"
@@ -408,7 +418,7 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 		Write-Verbose "Testing Telegraf config."
 		Try {
 			# Run test
-			(& $telegrafConfDest.binary --config-directory ($telegrafConfDestDir) --test) 2>&1 | Out-Null
+			(& $telegrafConfDest.binary --config $telegrafConfDest.base --config-directory $telegrafConfDestDir --test) 2>&1 | Write-Debug
 
 			# If test success
 			If ($LastExitCode -eq '0') {
@@ -427,47 +437,53 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 	}
 
 	## If config test success but service not exist
-	Elseif (($LastExitCode -eq '0') -and (-not (Get-Service Telegraf -ErrorAction SilentlyContinue))) {
+	Elseif (($LastExitCode -eq '0') -and (-not (Get-Service $ServiceName -ErrorAction SilentlyContinue))) {
 		If($PSCmdlet.ShouldProcess(
 			$env:computername,
 			"Install service")
 			)
 		{
-			Write-Output "Installing and starting Telegraf service."
+			Write-Output "Installing and starting '$ServiceName' service."
 			# Install service
 			Try {
-				(& $telegrafConfDest.binary --service install --config-directory ($telegrafConfDestDir)) 2>&1 | Out-Null
+				(& $telegrafConfDest.binary --service install --service-name=$ServiceName --service-display-name="$ServiceDisplayName" --config $telegrafConfDest.base --config-directory $telegrafConfDestDir) 2>&1 | Write-Debug
 				$created += 1
 			}
 			Catch {
-				Write-Warning 'Failed to install Telegraf service.'
+				Write-Warning 'Failed to install '$ServiceName' service.'
 				Throw $_.Exception.Message
 			}
+		}
 
+		If($PSCmdlet.ShouldProcess(
+			$ServiceName,
+			"Start-Service")
+			)
+		{
 			# Start service
 			Try {
-				Start-Service telegraf
+				Start-Service $ServiceName
 			}
 			Catch {
-				Write-Warning 'Failed to start Telegraf service.'
+				Write-Warning "Failed to start '$ServiceName' service."
 				Throw $_.Exception.Message
 			}
 		}
 	}
 
 	## If config test success and service exist
-	Elseif (($LastExitCode -eq '0') -and (Get-Service Telegraf -ErrorAction SilentlyContinue)) {
+	Elseif (($LastExitCode -eq '0') -and (Get-Service $ServiceName -ErrorAction SilentlyContinue)) {
 		If($PSCmdlet.ShouldProcess(
-			$env:computername,
+			$ServiceName,
 			"Restart service")
 			)
 		{
-			Write-Verbose "Telegraf service is already installed; Restarting."
+			Write-Verbose "'$ServiceName' service is already installed; Restarting."
 			Try {
-				Restart-Service telegraf
+				Restart-Service $ServiceName
 			}
 			Catch {
-				Write-Warning 'Failed to start Telegraf service.'
+				Write-Warning 'Failed to start '$ServiceName' service.'
 				Throw $_.Exception.Message
 			}
 		}

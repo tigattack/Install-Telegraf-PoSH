@@ -56,11 +56,13 @@ InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath
 
 ### Parameters
 
-| Parameter   	| Description                                                                                                                	|
-|-------------	|----------------------------------------------------------------------------------------------------------------------------	|
-| Source      	| Path to network share containing Telegraf source (agent, configurations, etc.). Defaults to the script's parent directory. 	|
-| Destination 	| Path to Telegraf destination directory. Defaults to "C:\Program Files\Telegraf".                                           	|
-| LogPath     	| Path to log file. Defaults to "C:\InstallTelegraf.log".                                                                    	|
-| WhatIf      	| Performs a dry run.                                                                                                        	|
-| Confirm     	| Prompts user for confirmation before taking action.                                                                        	|
-| Verbose     	| Enables verbose output.                                                                                                    	|
+| Parameter          	| Description                                                                                                                	|
+|--------------------	|----------------------------------------------------------------------------------------------------------------------------	|
+| Source             	| Path to network share containing Telegraf source (agent, configurations, etc.). Defaults to the script's parent directory. 	|
+| Destination        	| Path to Telegraf destination directory. Defaults to 'C:\Program Files\Telegraf'.                                           	|
+| ServiceName        	| Telegraf service name. Defaults to 'telegraf'.                                                                             	|
+| ServiceDisplayName 	| Telegraf service display name. Defaults to 'Telegraf'.                                                                     	|
+| LogPath            	| Path to log file. Defaults to 'C:\InstallTelegraf.log'.                                                                    	|
+| WhatIf             	| Performs a dry run.                                                                                                        	|
+| Confirm            	| Prompts user for confirmation before taking action.                                                                        	|
+| Verbose            	| Enables verbose output.                                                                                                    	|
