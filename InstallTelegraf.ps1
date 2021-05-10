@@ -40,20 +40,23 @@
 
 param (
 	[Alias('Source')]
-    [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
+    [Parameter(Position=0,Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$telegrafSource = "$PSScriptRoot",
 
 	[Alias('Destination')]
-    [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
+    [Parameter(Position=1,Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$telegrafDest = "C:\Program Files\Telegraf",
 
-    [Parameter(Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
+	[Parameter(Position=2,Mandatory = $False)]
+	[switch]$InstallService = $true,
+
+    [Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
     [string]$ServiceName = "telegraf",
 
-    [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
+    [Parameter(Position=4,Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$ServiceDisplayName = "Telegraf",
 
-    [Parameter(Mandatory = $False)][ValidateNotNullOrEmpty()]
+    [Parameter(Position=5,Mandatory = $False)][ValidateNotNullOrEmpty()]
     [string]$LogPath = "C:\InstallTelegraf.log"
 )
 
@@ -111,7 +114,7 @@ Try {
 			Write-Verbose "Directory does not exist: $telegrafDest"
 			Write-Verbose "Creating: $telegrafDest"
 			Write-Verbose "Creating: $telegrafConfDestDir"
-			New-Item -ItemType Directory -Path $telegrafConfDestDir
+			New-Item -ItemType Directory -Path $telegrafConfDestDir | Write-Debug
 			$created += 1
 		}
 	}
@@ -425,7 +428,7 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 
 			# If test success
 			If ($LastExitCode -eq '0') {
-				Write-Verbose "Telegraf config test successed."
+				Write-Verbose "Telegraf config test succeeded."
 			}
 			# If test not success
 			Else {
@@ -481,7 +484,7 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 			"Restart service")
 			)
 		{
-			Write-Verbose "'$ServiceName' service is already installed; Restarting."
+			Write-Verbose "Restarting '$ServiceName' service."
 			Try {
 				Restart-Service $ServiceName
 			}
