@@ -243,173 +243,181 @@ Try {
 		}
 	}
 
-	Write-Verbose "==== Testing optional configuration and candidacy ===="
+	# Get system ProductType
+	Write-Verbose "Getting system's ProductType."
+	$productType = (Get-CimInstance -ClassName Win32_OperatingSystem).ProductType
 
-	## Check if machine is DC, config exists, and config matches source
-	Write-Verbose "Getting computer's DomainRole."
-	$domainRole = Get-CimInstance -Class Win32_ComputerSystem | Select-Object -ExpandProperty DomainRole
-	If ($domainRole -match "4|5") {
-		Write-Verbose "Machine is candidate for AD DS config."
+	## If Win32_OperatingSystem.ProductType indicates server
+	If ($productType -ne '1') {
 
-		## Domain Controller config
-		If ($telegrafConfDest.adds | Test-Path) {
-			$addsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.adds)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.adds)).Hash
-			If ( -not $addsConfMatch ) {
+		Write-Verbose 'OperatingSystem ProductType indicates machine is Server; evaluting further configuration'
+		Write-Verbose "==== Testing optional configuration and candidacy ===="
+
+		## Check if machine is DC, config exists, and config matches source
+		## If Win32_OperatingSystem.ProductType indicates Domain Controller
+		If ($productType -eq "2") {
+			Write-Verbose "Machine is candidate for AD DS config."
+
+			## Domain Controller config
+			If ($telegrafConfDest.adds | Test-Path) {
+				$addsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.adds)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.adds)).Hash
+				If ( -not $addsConfMatch ) {
+					If($PSCmdlet.ShouldProcess(
+						$telegrafConfDest.adds,
+						"Update")
+						)
+					{
+						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.adds)"
+						Write-Verbose "Copying: $($telegrafConfSource.adds)"
+						Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds -Force
+						$updated += 1
+					}
+				}
+
+				Else {
+					Write-Verbose "$($copyMsg.match) $($telegrafConfDest.adds)"
+					$ignored += 1
+				}
+			}
+
+			Else {
+
 				If($PSCmdlet.ShouldProcess(
 					$telegrafConfDest.adds,
-					"Update")
+					"Copy")
 					)
 				{
-					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.adds)"
+					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.adds)"
 					Write-Verbose "Copying: $($telegrafConfSource.adds)"
-					Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds -Force
-					$updated += 1
+					Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds
+					$created += 1
+				}
+			}
+		}
+
+		## Check if DNS service exists, config exists, and config matches source
+		If (Get-Service DNS -ErrorAction SilentlyContinue) {
+			Write-Verbose "Machine is candidate for DNS config."
+
+			## DNS config
+			If ($telegrafConfDest.dns | Test-Path) {
+				$dnsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dns)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dns)).Hash
+				If ( -not $dnsConfMatch ) {
+					If($PSCmdlet.ShouldProcess(
+						$telegrafConfDest.dns,
+						"Update")
+						)
+					{
+						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dns)"
+						Write-Verbose "Copying: $($telegrafConfSource.dns)"
+						Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns -Force
+						$updated += 1
+					}
+				}
+
+				Else {
+					Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dns)"
+					$ignored += 1
 				}
 			}
 
 			Else {
-				Write-Verbose "$($copyMsg.match) $($telegrafConfDest.adds)"
-				$ignored += 1
-			}
-		}
 
-		Else {
-
-			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.adds,
-				"Copy")
-				)
-			{
-				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.adds)"
-				Write-Verbose "Copying: $($telegrafConfSource.adds)"
-				Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds
-				$created += 1
-			}
-		}
-	}
-
-	## Check if DNS service exists, config exists, and config matches source
-	If (Get-Service DNS -ErrorAction SilentlyContinue) {
-		Write-Verbose "Machine is candidate for DNS config."
-
-		## DNS config
-		If ($telegrafConfDest.dns | Test-Path) {
-			$dnsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dns)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dns)).Hash
-			If ( -not $dnsConfMatch ) {
 				If($PSCmdlet.ShouldProcess(
 					$telegrafConfDest.dns,
-					"Update")
+					"Copy")
 					)
 				{
-					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dns)"
+					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dns)"
 					Write-Verbose "Copying: $($telegrafConfSource.dns)"
-					Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns -Force
-					$updated += 1
+					Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns
+					$created += 1
+				}
+			}
+		}
+
+		## Check if DFSR service exists, config exists, and config matches source
+		If (Get-Service DFSR -ErrorAction SilentlyContinue) {
+			Write-Verbose "Machine is candidate for DFSR config."
+
+			## DFSR config
+			If ($telegrafConfDest.dfsr | Test-Path ) {
+
+				$dfsrConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dfsr)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dfsr)).Hash
+
+				If ( -not $dfsrConfMatch ) {
+					If($PSCmdlet.ShouldProcess(
+						$telegrafConfDest.dfsr,
+						"Update")
+						)
+					{
+						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsr)"
+						Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
+						Copy-Item -Path $telegrafConfSource.dfsr -Destination $telegrafConfDest.dfsr -Force
+						$updated += 1
+					}
+				}
+
+				Else {
+					Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dfsr)"
+					$ignored += 1
 				}
 			}
 
 			Else {
-				Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dns)"
-				$ignored += 1
-			}
-		}
 
-		Else {
-
-			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.dns,
-				"Copy")
-				)
-			{
-				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dns)"
-				Write-Verbose "Copying: $($telegrafConfSource.dns)"
-				Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns
-				$created += 1
-			}
-		}
-	}
-
-	## Check if DFSR service exists, config exists, and config matches source
-	If (Get-Service DFSR -ErrorAction SilentlyContinue) {
-		Write-Verbose "Machine is candidate for DFSR config."
-
-		## DFSR config
-		If ($telegrafConfDest.dfsr | Test-Path ) {
-
-			$dfsrConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dfsr)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dfsr)).Hash
-
-			If ( -not $dfsrConfMatch ) {
 				If($PSCmdlet.ShouldProcess(
 					$telegrafConfDest.dfsr,
-					"Update")
+					"Copy")
 					)
 				{
-					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsr)"
+					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsr)"
 					Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
-					Copy-Item -Path $telegrafConfSource.dfsr -Destination $telegrafConfDest.dfsr -Force
-					$updated += 1
+					Copy-Item -Path ($telegrafConfSource.dfsr) -Destination "$telegrafConfDestDir\"
+					$created += 1
+				}
+			}
+		}
+
+		## Check if DFSN service exists, config exists, and config matches source
+		If (Get-Service Dfs -ErrorAction SilentlyContinue) {
+			Write-Verbose "Machine is candidate for DFSN config."
+
+			## DFSN config
+			If ($telegrafConfDest.dfsn | Test-Path) {
+				$dfsnConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dfsn)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dfsn)).Hash
+				If ( -not $dfsnConfMatch ) {
+
+					If($PSCmdlet.ShouldProcess(
+						$telegrafConfDest.dfsn,
+						"Update")
+						)
+					{
+						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsn)"
+						Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
+						Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn -Force
+						$updated += 1
+					}
+				}
+
+				Else {
+					Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dfsn)"
+					$ignored += 1
 				}
 			}
 
 			Else {
-				Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dfsr)"
-				$ignored += 1
-			}
-		}
-
-		Else {
-
-			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.dfsr,
-				"Copy")
-				)
-			{
-				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsr)"
-				Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
-				Copy-Item -Path ($telegrafConfSource.dfsr) -Destination "$telegrafConfDestDir\"
-				$created += 1
-			}
-		}
-	}
-
-	## Check if DFSN service exists, config exists, and config matches source
-	If (Get-Service Dfs -ErrorAction SilentlyContinue) {
-		Write-Verbose "Machine is candidate for DFSN config."
-
-		## DFSN config
-		If ($telegrafConfDest.dfsn | Test-Path) {
-			$dfsnConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dfsn)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dfsn)).Hash
-			If ( -not $dfsnConfMatch ) {
 
 				If($PSCmdlet.ShouldProcess(
 					$telegrafConfDest.dfsn,
-					"Update")
+					"Copy")
 					)
 				{
-					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsn)"
+					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsn)"
 					Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
-					Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn -Force
-					$updated += 1
+					Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn
+					$created += 1
 				}
-			}
-
-			Else {
-				Write-Verbose "$($copyMsg.match) $($telegrafConfDest.dfsn)"
-				$ignored += 1
-			}
-		}
-
-		Else {
-
-			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.dfsn,
-				"Copy")
-				)
-			{
-				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsn)"
-				Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
-				Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn
-				$created += 1
 			}
 		}
 	}
