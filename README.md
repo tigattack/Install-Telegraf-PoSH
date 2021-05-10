@@ -20,6 +20,7 @@ Suggested script deployment method: Group Policy computer start-up script.
 ## Requirements
 
 * PowerShell 5.1 or higher.
+* Administrator privileges.
 * A network share with the following files in a flat structure:
     *  `telegraf.exe`
     *  `telegraf.exe.sha256sum` *
