@@ -28,10 +28,10 @@
 .OUTPUTS
   Log file stored in C:\TelegrafInstall.log or path specified with LogPath parameter
 .NOTES
-  Version:				1.3
+  Version:				1.4
   Author:				tigattack
   Modification Date:	10/05/2021
-  Purpose/Change:		Report final result and send all other output to verbose pipeline.
+  Purpose/Change:		Improve ShouldProcess handling and fix minor issues.
 .EXAMPLE
   InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
 #>
