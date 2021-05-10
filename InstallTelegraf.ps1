@@ -8,6 +8,8 @@
   Defaults to the script's parent directory.
 .PARAMETER Destination
   Path to Telegraf destination directory. Defaults to 'C:\Program Files\Telegraf'.
+.PARAMETER InstallService
+  Switch which defaults to true but can be used to disable the installation of the Telegraf service.
 .PARAMETER ServiceName
   Telegraf service name. Defaults to 'telegraf'.
 .PARAMETER ServiceDisplayName
@@ -437,7 +439,7 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 	}
 
 	## If config test success but service not exist
-	Elseif (($LastExitCode -eq '0') -and (-not (Get-Service $ServiceName -ErrorAction SilentlyContinue))) {
+	If (($LastExitCode -eq '0') -and ($InstallService -eq $true) -and (-not (Get-Service $ServiceName -ErrorAction SilentlyContinue))) {
 		If($PSCmdlet.ShouldProcess(
 			$env:computername,
 			"Install service")
