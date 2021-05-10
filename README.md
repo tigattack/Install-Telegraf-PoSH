@@ -35,7 +35,17 @@ Suggested script deployment method: Group Policy computer start-up script.
 
 ## Setup
 
-1. Clone this repository to your desired source location (i.e. a network path).
+1. Download all the files in this folder to your desired source location (i.e. a network path).  
+    This can be done by running the commands below in PowerShell*:  
+    ```PowerShell
+    cd <desired config source location> # Make sure you change this
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest "https://github.com/tigattack/Scripts-Public/archive/refs/heads/master.zip" -OutFile "$env:TEMP\Scripts-Public-master.zip"
+    Expand-Archive -Path "$env:TEMP\Scripts-Public-master.zip" -DestinationPath "$env:TEMP\"
+    Remove-Item "$env:TEMP\Scripts-Public-master.zip"
+    Move-Item "$env:TEMP\Scripts-Public-master\InstallTelegraf\" .
+    Remove-Item "$env:TEMP\Scripts-Public-master" -Recurse
+    ```
 2. Download the latest Telegraf release for Windows from [Telegraf's GitHub releases](https://github.com/influxdata/telegraf/releases).
 3. Extract the EXE from the downloaded ZIP and move it to the source location.
 4. Rename the EXE to `telegraf.exe`.
@@ -46,6 +56,9 @@ Suggested script deployment method: Group Policy computer start-up script.
 6. Configure your output plugin and any other Telegraf agent settings `telegraf.conf`.
 
 Ready to go!
+
+\* This little script is entirely safe. It instructs PowerShell to use TLS1.2 (allowing it to download from a secure (HTTPS) URL), downloads a ZIP of this repository to a temporary location, extracts the ZIP, removes the ZIP, moves this project into your destination directory, then removes the extracted directory.  
+However, if you don't trust it, please feel free perform a manual download of all the files in this folder (except `README.md`).
 
 ## Usage
 
