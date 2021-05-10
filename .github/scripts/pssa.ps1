@@ -3,7 +3,7 @@ Set-PSRepository PSGallery -InstallationPolicy Trusted
 Install-Module PSScriptAnalyzer -ErrorAction Stop
 
 # Run PSSA
-Invoke-ScriptAnalyzer -Path * -Recurse -OutVariable issues | Out-Null
+Invoke-ScriptAnalyzer -Path * -Recurse -Settings $GITHUB_WORKSPACE/.github/scripts/pssa-settings.psd1 -OutVariable issues | Out-Null
 
 # Get results and separate types
 $errors   = $issues.Where({$_.Severity -eq 'Error' -or $_.Severity -eq 'ParseError'})

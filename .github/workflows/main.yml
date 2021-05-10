@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Lint with PSScriptAnalyzer
+    - name: Check with PSScriptAnalyzer
       shell: pwsh
       run: |
-            ./.github/scripts/pssa.ps1
+            $GITHUB_WORKSPACE/.github/scripts/pssa.ps1
