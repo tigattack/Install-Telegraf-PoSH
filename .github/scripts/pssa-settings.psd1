@@ -25,8 +25,6 @@
 				'7.1'
 			)
 		}
-		PSAvoidDefaultValueSwitchParameter = @{
-			Enable = $false
-		}
+		ExcludeRules=@('PSAvoidDefaultValueSwitchParameter')
 	}
 }
