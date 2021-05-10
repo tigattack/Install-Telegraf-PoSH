@@ -34,7 +34,7 @@ Suggested script deployment method: Group Policy computer  start-up script.
 
 1. Clone this repository to your desired source location (i.e. a network path).
 2. Download the latest Telegraf release for Windows from [Telegraf's GitHub releases](https://github.com/influxdata/telegraf/releases).
-3. Extract the EXE from downloaded ZIP and move it to the source location.
+3. Extract the EXE from the downloaded ZIP and move it to the source location.
 4. Rename the EXE to `telegraf.exe`.
 5. Open PowerShell, cd to the source directory (e.g. `cd \\path\to\share`) ,and run the following command:  
     ```PowerShell
