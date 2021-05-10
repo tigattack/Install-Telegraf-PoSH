@@ -13,4 +13,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Check with PSScriptAnalyzer
       shell: pwsh
-      run: "$GITHUB_WORKSPACE/.github/scripts/pssa.ps1"
+      run: "& $GITHUB_WORKSPACE/.github/scripts/pssa.ps1"
