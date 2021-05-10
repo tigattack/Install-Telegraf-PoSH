@@ -40,24 +40,24 @@
 
 param (
 	[Alias('Source')]
-    [Parameter(Position=0,Mandatory = $False)][ValidateNotNullOrEmpty()]
-    [string]$telegrafSource = "$PSScriptRoot",
+	[Parameter(Position=0,Mandatory = $False)][ValidateNotNullOrEmpty()]
+	[string]$telegrafSource = "$PSScriptRoot",
 
 	[Alias('Destination')]
-    [Parameter(Position=1,Mandatory = $False)][ValidateNotNullOrEmpty()]
-    [string]$telegrafDest = "C:\Program Files\Telegraf",
+	[Parameter(Position=1,Mandatory = $False)][ValidateNotNullOrEmpty()]
+	[string]$telegrafDest = "C:\Program Files\Telegraf",
 
 	[Parameter(Position=2,Mandatory = $False)]
 	[switch]$InstallService = $true,
 
-    [Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
-    [string]$ServiceName = "telegraf",
+	[Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
+	[string]$ServiceName = "telegraf",
 
-    [Parameter(Position=4,Mandatory = $False)][ValidateNotNullOrEmpty()]
-    [string]$ServiceDisplayName = "Telegraf",
+	[Parameter(Position=4,Mandatory = $False)][ValidateNotNullOrEmpty()]
+	[string]$ServiceDisplayName = "Telegraf",
 
-    [Parameter(Position=5,Mandatory = $False)][ValidateNotNullOrEmpty()]
-    [string]$LogPath = "C:\InstallTelegraf.log"
+	[Parameter(Position=5,Mandatory = $False)][ValidateNotNullOrEmpty()]
+	[string]$LogPath = "C:\InstallTelegraf.log"
 )
 
 # Configure
@@ -65,29 +65,29 @@ $telegrafBinarySum = "$($telegrafSource)\telegraf.exe.sha256sum"
 $telegrafConfDestDir = "$($telegrafDest)\telegraf.d"
 
 $telegrafConfSource = @{
-    base = "$($telegrafSource)\telegraf.conf";
-    binary = "$($telegrafSource)\telegraf.exe";
-    sysMetrics = "$($telegrafSource)\telegraf-system-metrics.conf";
-    adds = "$($telegrafSource)\telegraf-adds.conf";
+	base = "$($telegrafSource)\telegraf.conf";
+	binary = "$($telegrafSource)\telegraf.exe";
+	sysMetrics = "$($telegrafSource)\telegraf-system-metrics.conf";
+	adds = "$($telegrafSource)\telegraf-adds.conf";
 	dns = "$($telegrafSource)\telegraf-dns.conf";
-    dfsn = "$($telegrafSource)\telegraf-dfsn.conf";
-    dfsr = "$($telegrafSource)\telegraf-dfsr.conf"
+	dfsn = "$($telegrafSource)\telegraf-dfsn.conf";
+	dfsr = "$($telegrafSource)\telegraf-dfsr.conf"
 }
 
 $telegrafConfDest = @{
-    base = "$($telegrafDest)\telegraf.conf";
-    binary = "$($telegrafDest)\telegraf.exe";
-    sysMetrics = "$($telegrafConfDestDir)\telegraf-system-metrics.conf";
-    adds = "$($telegrafConfDestDir)\telegraf-adds.conf";
+	base = "$($telegrafDest)\telegraf.conf";
+	binary = "$($telegrafDest)\telegraf.exe";
+	sysMetrics = "$($telegrafConfDestDir)\telegraf-system-metrics.conf";
+	adds = "$($telegrafConfDestDir)\telegraf-adds.conf";
 	dns = "$($telegrafConfDestDir)\telegraf-dns.conf";
-    dfsn = "$($telegrafConfDestDir)\telegraf-dfsn.conf";
-    dfsr = "$($telegrafConfDestDir)\telegraf-dfsr.conf"
+	dfsn = "$($telegrafConfDestDir)\telegraf-dfsn.conf";
+	dfsr = "$($telegrafConfDestDir)\telegraf-dfsr.conf"
 }
 
 $copyMsg = @{
-    noMatch = "File does not match source: ";
-    noExist = "File does not exist: ";
-    match = "File exists and matches source. Ignoring: "
+	noMatch = "File does not match source: ";
+	noExist = "File does not exist: ";
+	match = "File exists and matches source. Ignoring: "
 }
 
 $created = 0
