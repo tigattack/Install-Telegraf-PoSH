@@ -36,7 +36,7 @@ Suggested script deployment method: Group Policy computer start-up script.
 ## Setup
 
 1. Download all the files in this folder to your desired source location (i.e. a network path).  
-    This can be done by running the commands below in PowerShell*:  
+    This can be done by running the commands below in PowerShell *  
     ```PowerShell
     cd <desired config source location> # Make sure you change this
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
