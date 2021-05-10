@@ -1,5 +1,6 @@
 # Settings for PSScriptAnalyzer invocation.
 @{
+	ExcludeRules=@('PSAvoidDefaultValueSwitchParameter')
 	Rules = @{
 		PSUseCompatibleCommands = @{
 			Enable = $true
@@ -25,6 +26,5 @@
 				'7.1'
 			)
 		}
-		ExcludeRules=@('PSAvoidDefaultValueSwitchParameter')
 	}
 }
