@@ -93,7 +93,8 @@ Try {
 			"Create $telegrafDest and $telegrafConfDestDir",
 			$env:computername,
 			"Create destination directories")
-		) {
+		)
+		{
 			Write-Verbose "Directory does not exist: $telegrafDest"
 			Write-Verbose "Creating: $telegrafDest"
 			Write-Verbose "Creating: $telegrafConfDestDir"
@@ -114,10 +115,11 @@ Try {
 		# Overwrite agent if no match
 		If ( -not $binaryMatch ) {
 			If($PSCmdlet.ShouldProcess(
-				"Overwrite $($telegrafConfDest.binary) with $($telegrafConfSource.binary)",
+				"Overwrite agent in destination",
 				$env:computername,
 				"Update agent")
-				) {
+			)
+			{
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.binary)"
 				Write-Verbose "Copying: $($telegrafConfSource.binary)"
 				Copy-Item -Path $telegrafConfSource.binary -Destination $telegrafConfDest.binary -Force
@@ -134,8 +136,11 @@ Try {
 	Else {
 		# Copy agent if no exist
 		If($PSCmdlet.ShouldProcess(
-			"Copy $($telegrafConfSource.binary) to $($telegrafConfDest.binary)", $env:computername, "Copy agent")
-			) {
+			"Copy $($telegrafConfSource.binary) to $($telegrafConfDest.binary)",
+			$env:computername,
+			"Copy agent")
+			)
+		{
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.binary)"
 			Write-Verbose "Copying: $($telegrafConfSource.binary)"
 			Copy-Item -Path $telegrafConfSource.binary -Destination $telegrafConfDest.binary
@@ -153,7 +158,8 @@ Try {
 				"Overwrite $($telegrafConfDest.base) with $($telegrafConfSource.base)",
 				$env:computername,
 				"Update base configuration")
-				) {
+				)
+			{
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.base)"
 				Write-Verbose "Copying: $($telegrafConfSource.base)"
 				Copy-Item -Path ($telegrafConfSource.base) -Destination $telegrafConfDest.base -Force
@@ -173,7 +179,8 @@ Try {
 			"Copy $($telegrafConfSource.base) to $($telegrafConfDest.base)",
 			$env:computername,
 			"Install base configuration")
-			) {
+			)
+		{
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.base)"
 			Write-Verbose "Copying: $($telegrafConfSource.base)"
 			Copy-Item -Path ($telegrafConfSource.base) -Destination $telegrafConfDest.base
@@ -191,7 +198,8 @@ Try {
 				"Overwrite $($telegrafConfDest.sysMetrics) with $($telegrafConfSource.sysMetrics)",
 				$env:computername,
 				"Update system metrics configuration")
-				) {
+				)
+			{
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.sysMetrics)"
 				Write-Verbose "Copying: $($telegrafConfSource.sysMetrics)"
 				Copy-Item -Path ($telegrafConfSource.sysMetrics) -Destination $telegrafConfDest.sysMetrics -Force
@@ -211,7 +219,8 @@ Try {
 			"Copy $($telegrafConfSource.sysMetrics) to $($telegrafConfDest.sysMetrics)",
 			$env:computername,
 			"Install system metrics configuration")
-			) {
+			)
+		{
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.sysMetrics)"
 			Write-Verbose "Copying: $($telegrafConfSource.sysMetrics)"
 			Copy-Item -Path ($telegrafConfSource.sysMetrics) -Destination $telegrafConfDest.sysMetrics
@@ -235,7 +244,8 @@ Try {
 					"Overwrite $($telegrafConfDest.adds) with $($telegrafConfSource.adds)",
 					$env:computername,
 					"Update Active Directory Domain Services metrics configuration")
-					) {
+					)
+				{
 					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.adds)"
 					Write-Verbose "Copying: $($telegrafConfSource.adds)"
 					Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds -Force
@@ -255,8 +265,8 @@ Try {
 				"Copy $($telegrafConfSource.adds) to $($telegrafConfDest.adds)",
 				$env:computername,
 				"Install Active Directory Domain Services metrics configuration")
-				) {
-
+				)
+			{
 				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.adds)"
 				Write-Verbose "Copying: $($telegrafConfSource.adds)"
 				Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds
@@ -277,7 +287,8 @@ Try {
 					"Overwrite $($telegrafConfDest.dns) with $($telegrafConfSource.dns)",
 					$env:computername,
 					"Update DNS metrics configuration")
-					) {
+					)
+				{
 					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dns)"
 					Write-Verbose "Copying: $($telegrafConfSource.dns)"
 					Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns -Force
@@ -297,7 +308,8 @@ Try {
 				"Copy $($telegrafConfSource.dns) to $($telegrafConfDest.dns)",
 				$env:computername,
 				"Install DNS metrics configuration")
-				) {
+				)
+			{
 				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dns)"
 				Write-Verbose "Copying: $($telegrafConfSource.dns)"
 				Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns
@@ -320,7 +332,8 @@ Try {
 					"Overwrite $($telegrafConfDest.dfsr) with $($telegrafConfSource.dfsr)",
 					$env:computername,
 					"Update DFSR metrics configuration")
-					) {
+					)
+				{
 					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsr)"
 					Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
 					Copy-Item -Path $telegrafConfSource.dfsr -Destination $telegrafConfDest.dfsr -Force
@@ -340,8 +353,8 @@ Try {
 				"Copy $($telegrafConfSource.dfsr) to $($telegrafConfDest.dfsr)",
 				$env:computername,
 				"Install DFSR metrics configuration")
-				) {
-
+				)
+			{
 				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsr)"
 				Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
 				Copy-Item -Path ($telegrafConfSource.dfsr) -Destination "$telegrafConfDestDir\"
@@ -363,8 +376,8 @@ Try {
 					"Overwrite $($telegrafConfDest.dfsn) with $($telegrafConfSource.dfsn)",
 					$env:computername,
 					"Update DFSN metrics configuration")
-					) {
-
+					)
+				{
 					Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsn)"
 					Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
 					Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn -Force
@@ -384,8 +397,8 @@ Try {
 				"Copy $($telegrafConfSource.dfsn) to $($telegrafConfDest.dfsn)",
 				$env:computername,
 				"Install DFSN metrics configuration")
-				) {
-
+				)
+			{
 				Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsn)"
 				Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
 				Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn
@@ -405,8 +418,8 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 		"Test all new/updated Telegraf configurations)",
 		$env:computername,
 		"Test Telegraf configuration")
-		) {
-
+		)
+	{
 		Write-Verbose "Testing Telegraf config."
 		Try {
 			# Run test
@@ -434,8 +447,8 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 			"Install Telegraf as system service and start",
 			$env:computername,
 			"Install Telegraf service")
-			) {
-
+			)
+		{
 			Write-Output "Installing and starting Telegraf service."
 			# Install service
 			Try {
@@ -464,7 +477,8 @@ If (($created -gt 0) -or ($updated -gt 0)) {
 			"Restart Telegraf service",
 			$env:computername,
 			"Restart Telegraf service")
-			) {
+			)
+		{
 			Write-Verbose "Telegraf service is already installed; Restarting."
 			Try {
 				Restart-Service telegraf
