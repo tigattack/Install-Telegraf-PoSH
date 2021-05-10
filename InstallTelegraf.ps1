@@ -2,14 +2,14 @@
 .SYNOPSIS
   Installs Windows Telegraf agent and relevant config.
 .DESCRIPTION
+  Installs/updates Telegraf agent, output plugin, and all relevant input plugins from a network location.
 .PARAMETER Source
-Path to network share (or other) containing Telegraf source (agent, configurations, etc.).
-Defaults to the script's parent directory.
+  Path to network share (or other) containing Telegraf source (agent, configurations, etc.).
+  Defaults to the script's parent directory.
 .PARAMETER Destination
-Path to Telegraf destination directory. Defaults to C:\Program Files\Telegraf
-Installs/updates Telegraf agent and config from a network location.
+  Path to Telegraf destination directory. Defaults to C:\Program Files\Telegraf
 .PARAMETER LogPath
-Path to log file. Defaults to C:\InstallTelegraf.log
+  Path to log file. Defaults to C:\InstallTelegraf.log
 .PARAMETER WhatIf
   PowerShell default WhatIf param.
 .PARAMETER Confirm
