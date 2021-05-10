@@ -45,3 +45,22 @@ Suggested script deployment method: Group Policy computer start-up script.
 6. Configure your output plugin and any other Telegraf agent settings `telegraf.conf`.
 
 Ready to go!
+
+## Usage
+
+### Example
+
+```PowerShell
+InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
+```
+
+### Parameters
+
+| Parameter   	| Description                                                                                                                	|
+|-------------	|----------------------------------------------------------------------------------------------------------------------------	|
+| Source      	| Path to network share containing Telegraf source (agent, configurations, etc.). Defaults to the script's parent directory. 	|
+| Destination 	| Path to Telegraf destination directory. Defaults to "C:\Program Files\Telegraf".                                           	|
+| LogPath     	| Path to log file. Defaults to "C:\InstallTelegraf.log".                                                                    	|
+| WhatIf      	| Performs a dry run.                                                                                                        	|
+| Confirm     	| Prompts user for confirmation before taking action.                                                                        	|
+| Verbose     	| Enables verbose output.                                                                                                    	|
