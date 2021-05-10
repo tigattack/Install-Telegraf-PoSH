@@ -79,7 +79,7 @@ $updated = 0
 $ignored = 0
 
 # Start logging
-Start-Transcript -Path $LogPath | Out-Null
+Start-Transcript -Path $LogPath -OutVariable transcript | Out-Null
 
 # Check files and copy/overwrite if necessary.
 Try {
@@ -503,4 +503,6 @@ Write-Output "`nSuccessfully completed. Status:" $($result.Keys |
 )
 
 # Stop logging
-Stop-Transcript | Out-Null
+If ($transcript) {
+	Stop-Transcript | Out-Null
+}
