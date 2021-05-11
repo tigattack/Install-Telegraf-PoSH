@@ -26,6 +26,8 @@ It will then scan the system to determine candidacy for the following additional
 | DFS Replication                  	| [telegraf-dfsr.conf](telegraf-dfsr.conf)    	|
 | DNS Server                       	| [telegraf-dns.conf](telegraf-dns.conf)      	|
 
+I am happy to add further configurations upon request.  
+Please raise an issue or pull request, ideally with an example Telegraf configuration.
 
 **\*** While this script is primarily designed for Windows Server, it will still work for Windows clients, the only difference being the additional configurations in the table above will never be installed (i.e. only the agent, output plugin, and system metrics input plugin).
 
