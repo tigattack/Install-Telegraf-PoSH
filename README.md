@@ -77,7 +77,7 @@ It is flexible in this regard though, the only requirement being that it is run 
 Ready to go!
 
 **\*** This little script is entirely safe. It instructs PowerShell to use TLS1.2 (allowing it to download from a secure (HTTPS) URL), downloads a ZIP of this repository to a temporary location, extracts the ZIP, removes the ZIP, moves this project into your destination directory, then removes the extracted directory.  
-However, if you don't trust it, please feel free perform a manual download of all the files in this folder (except `README.md`).
+However, if you don't trust it, please feel free perform a manual download of all the files in this folder (except `README.md` and `.github`).
 
 ## Usage
 
