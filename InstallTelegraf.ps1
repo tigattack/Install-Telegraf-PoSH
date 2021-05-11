@@ -250,7 +250,7 @@ Try {
 	## If Win32_OperatingSystem.ProductType indicates server
 	If ($productType -ne '1') {
 
-		Write-Verbose 'OperatingSystem ProductType indicates machine is Server; evaluting further configuration'
+		Write-Verbose 'OperatingSystem ProductType indicates machine is Server; evaluating further configuration'
 		Write-Verbose "==== Testing optional configuration and candidacy ===="
 
 		## Check if machine is DC, config exists, and config matches source
