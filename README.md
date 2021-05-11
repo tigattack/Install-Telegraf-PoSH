@@ -59,11 +59,11 @@ It is flexible in this regard though, the only requirement being that it is run 
     ```PowerShell
     cd <desired config source location> # Make sure you change this
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest "https://github.com/tigattack/Scripts-Public/archive/refs/heads/master.zip" -OutFile "$env:TEMP\Scripts-Public-master.zip"
-    Expand-Archive -Path "$env:TEMP\Scripts-Public-master.zip" -DestinationPath "$env:TEMP\"
-    Remove-Item "$env:TEMP\Scripts-Public-master.zip"
-    Move-Item "$env:TEMP\Scripts-Public-master\InstallTelegraf\" .
-    Remove-Item "$env:TEMP\Scripts-Public-master" -Recurse
+    Invoke-WebRequest "https://github.com/tigattack/Install-Telegraf-PoSH/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Install-Telegraf-PoSH.zip"
+    Expand-Archive -Path "$env:TEMP\Install-Telegraf-PoSH.zip" -DestinationPath "$env:TEMP\"
+    Remove-Item "$env:TEMP\Install-Telegraf-PoSH.zip"
+    Remove-Item "$env:TEMP\Install-Telegraf-PoSH-main\.github" -Recurse
+    Move-Item "$env:TEMP\Install-Telegraf-PoSH-main\" ".\Install-Telegraf"
     ```
 2. Download the latest Telegraf release for Windows from [Telegraf's GitHub releases](https://github.com/influxdata/telegraf/releases).
 3. Extract the EXE from the downloaded ZIP and move it to the source location.
