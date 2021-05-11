@@ -5,6 +5,8 @@
 * [Setup](#setup)
 * [Usage](#usage)
   * [Example](#example)
+    * [Screenshots](#screenshots)
+    * [Commands](#commands)
   * [Parameters](#parameters)
 
 ## Overview
@@ -57,7 +59,7 @@ It is flexible in this regard though, the only requirement being that it is run 
 1. Download all the files in this folder to your desired source location (i.e. a network path).  
     This can be done by running the commands below in PowerShell *  
     ```PowerShell
-    cd <desired config source location> # Make sure you change this
+    cd \\path\to\share # Make sure you change this
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     Invoke-WebRequest "https://github.com/tigattack/Install-Telegraf-PoSH/archive/refs/heads/main.zip" -OutFile "$env:TEMP\Install-Telegraf-PoSH.zip"
     Expand-Archive -Path "$env:TEMP\Install-Telegraf-PoSH.zip" -DestinationPath "$env:TEMP\"
@@ -77,14 +79,50 @@ It is flexible in this regard though, the only requirement being that it is run 
 Ready to go!
 
 **\*** This little script is entirely safe. It instructs PowerShell to use TLS1.2 (allowing it to download from a secure (HTTPS) URL), downloads a ZIP of this repository to a temporary location, extracts the ZIP, removes the ZIP, moves this project into your destination directory, then removes the extracted directory.  
-However, if you don't trust it, please feel free perform a manual download of all the files in this folder (except `README.md` and `.github`).
+However, please also feel free to perform a manual download of all the files in this folder (except `README.md` and `.github`).
 
 ## Usage
 
 ### Example
 
+#### Screenshots
+
+First install:
+
+![alt text](https://i.tiga.tech/LUlo2/RaFEbuju26.png/raw "First install")
+
+Update:
+
+![alt text](https://i.tiga.tech/LUlo2/zovUBIVo22.png/raw "Update")
+
+#### Commands
+
+Standalone:
 ```PowerShell
-InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
+InstallTelegraf.ps1 -Source \\path\to\share `
+    -Destination C:\custom\path `
+    -ServiceName my-telegraf `
+    -ServiceDisplayName 'My Telegraf' `
+    -LogPath C:\Windows\TEMP\InstallTelegraf.log
+```
+
+Standalone dry run:
+```PowerShell
+InstallTelegraf.ps1 -Source \\path\to\share `
+    -Destination C:\custom\path `
+    -ServiceName my-telegraf `
+    -ServiceDisplayName 'My Telegraf' `
+    -LogPath C:\Windows\TEMP\InstallTelegraf.log `
+    -WhatIf
+```
+
+Automated Deployment:
+```PowerShell
+PowerShell.exe -WindowStyle Hidden -File \\path\to\InstallTelegraf.ps1 -Source \\path\to\share `
+    -Destination C:\custom\path `
+    -ServiceName my-telegraf `
+    -ServiceDisplayName 'My Telegraf' `
+    -LogPath C:\Windows\TEMP\InstallTelegraf.log
 ```
 
 ### Parameters
