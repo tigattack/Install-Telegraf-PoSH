@@ -7,7 +7,7 @@
   * [Example](#example)
   * [Parameters](#parameters)
 
-# Overview
+## Overview
 
 This is a Telegraf deployment script for Windows Server* environments.
 
