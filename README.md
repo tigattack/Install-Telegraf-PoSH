@@ -100,3 +100,7 @@ InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath
 | WhatIf             	| Switch 	| Performs a dry run.                                                                                                        	|
 | Confirm            	| Switch 	| Prompts user for confirmation before taking action.                                                                        	|
 | Verbose            	| Switch 	| Enables verbose output.                                                                                                    	|
+
+## Credits
+
+Thank you to [feliasson](https://github.com/feliasson) for their help.
