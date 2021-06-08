@@ -18,8 +18,10 @@ Foreach ($i in $warnings) {
   Write-Output "::warning file=$($i.ScriptName),line=$($i.Line),col=$($i.Column)::$($i.RuleName) - $($i.Message)"
 }
 Foreach ($i in $infos) {
-  Write-Output "There were $($errors.Count) errors, $($warnings.Count) warnings, and $($infos.Count) infos in total." | Format-Table -AutoSize
+  Write-Output "::debug file=$($i.ScriptName),line=$($i.Line),col=$($i.Column)::$($i.RuleName) - $($i.Message)"
 }
+
+Write-Output "There were $($errors.Count) errors, $($warnings.Count) warnings, and $($infos.Count) infos in total."
 
 If ($errors) {
 	exit 1
