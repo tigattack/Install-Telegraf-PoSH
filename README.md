@@ -15,9 +15,9 @@ This is a Telegraf deployment script for Windows Server* environments.
 
 By default, the script will install a base configuration which includes:
 
-* Telegraf agent as system service *([configurable](#parameters))*.
+* Telegraf agent *(optionally as a system service - [configurable](#parameters))*.
 * Your pre-configured [**output plugin**](telegraf.conf).
-* A comprehensive [**system metrics input plugin**](telegraf-system-metrics.conf) configuration.  
+* A comprehensive [**system metrics input plugin**](telegraf-system-metrics.conf) configuration.
 
 It will then scan the system to determine candidacy for the following additional input plugins:
 
@@ -28,14 +28,14 @@ It will then scan the system to determine candidacy for the following additional
 | DFS Replication                  	| [telegraf-dfsr.conf](telegraf-dfsr.conf)    	|
 | DNS Server                       	| [telegraf-dns.conf](telegraf-dns.conf)      	|
 
-I am happy to add further configurations upon request.  
-Please raise an issue or pull request, ideally with an example Telegraf configuration.
+I am happy to add further configurations upon request.
+Please raise an [issue](https://github.com/tigattack/Install-Telegraf-PoSH/issues/new?assignees=tigattack&labels=enhancement&title=Configuration%20Request%20-%20) or pull request, ideally with an example Telegraf configuration.
 
 **\*** While this script is primarily designed for Windows Server, it will still work for Windows clients, the only difference being the additional configurations in the table above will never be installed (i.e. only the agent, output plugin, and system metrics input plugin).
 
 **\*\*** All of the above configurations are typically (but not always) applied to domain controllers since they commonly have all of the mentioned roles installed.
 
-**Suggested script deployment method:** Group Policy computer start-up script.  
+**Suggested script deployment method:** Group Policy computer start-up script.
 It is flexible in this regard though, the only requirement being that it is run on the device itself.
 
 ## Requirements
@@ -56,8 +56,8 @@ It is flexible in this regard though, the only requirement being that it is run 
 
 ## Setup
 
-1. Download all the files in this folder to your desired source location (i.e. a network path).  
-    This can be done by running the commands below in PowerShell *  
+1. Download all the files in this folder to your desired source location (i.e. a network path).
+    This can be done by running the commands below in PowerShell *
     ```PowerShell
     cd \\path\to\share # Make sure you change this
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -70,7 +70,7 @@ It is flexible in this regard though, the only requirement being that it is run 
 2. Download the latest Telegraf release for Windows from [Telegraf's GitHub releases](https://github.com/influxdata/telegraf/releases).
 3. Extract the EXE from the downloaded ZIP and move it to the source location.
 4. Rename the EXE to `telegraf.exe`.
-5. Open PowerShell, cd to the source directory (e.g. `cd \\path\to\share`) ,and run the following command:  
+5. Open PowerShell, cd to the source directory (e.g. `cd \\path\to\share`) ,and run the following command:
     ```PowerShell
     (Get-FileHash -Algorithm SHA256 ".\telegraf.exe").Hash | Out-File ".\telegraf.exe.sha256sum"
     ```
@@ -78,7 +78,7 @@ It is flexible in this regard though, the only requirement being that it is run 
 
 Ready to go!
 
-**\*** This little script is entirely safe. It instructs PowerShell to use TLS1.2 (allowing it to download from a secure (HTTPS) URL), downloads a ZIP of this repository to a temporary location, extracts the ZIP, removes the ZIP, moves this project into your destination directory, then removes the extracted directory.  
+**\*** These commands are entirely safe. It instructs PowerShell to use TLS1.2 (allowing it to download from a secure (HTTPS) URL), downloads a ZIP of this repository to a temporary location, extracts the ZIP, removes the ZIP, moves this project into your destination directory, then removes the extracted directory.
 However, please also feel free to perform a manual download of all the files in this folder (except `README.md` and `.github`).
 
 ## Usage
@@ -101,6 +101,7 @@ Standalone:
 ```PowerShell
 InstallTelegraf.ps1 -Source \\path\to\share `
     -Destination C:\custom\path `
+    -InstallService `
     -ServiceName my-telegraf `
     -ServiceDisplayName 'My Telegraf' `
     -LogPath C:\Windows\TEMP\InstallTelegraf.log
@@ -110,6 +111,7 @@ Standalone dry run:
 ```PowerShell
 InstallTelegraf.ps1 -Source \\path\to\share `
     -Destination C:\custom\path `
+    -InstallService `
     -ServiceName my-telegraf `
     -ServiceDisplayName 'My Telegraf' `
     -LogPath C:\Windows\TEMP\InstallTelegraf.log `
@@ -120,9 +122,15 @@ Automated Deployment:
 ```PowerShell
 PowerShell.exe -WindowStyle Hidden -File \\path\to\InstallTelegraf.ps1 -Source \\path\to\share `
     -Destination C:\custom\path `
+    -InstallService `
     -ServiceName my-telegraf `
     -ServiceDisplayName 'My Telegraf' `
     -LogPath C:\Windows\TEMP\InstallTelegraf.log
+```
+
+Install without service:
+```PowerShell
+InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
 ```
 
 ### Parameters
@@ -131,7 +139,7 @@ PowerShell.exe -WindowStyle Hidden -File \\path\to\InstallTelegraf.ps1 -Source \
 |--------------------	|--------	|----------------------------------------------------------------------------------------------------------------------------	|
 | Source             	| String 	| Path to network share containing Telegraf source (agent, configurations, etc.). Defaults to the script's parent directory. 	|
 | Destination        	| String 	| Path to Telegraf destination directory. Defaults to 'C:\Program Files\Telegraf'.                                           	|
-| InstallService     	| Switch 	| Defaults to true but can be used to disable the installation of the Telegraf service (i.e. `-InstallService:$false`).      	|
+| InstallService     	| Switch 	| Switch parameter to control the installation of the Telegraf service. Service is installed if parameter is used, as per the examples above.      	|
 | ServiceName        	| String 	| Telegraf service name. Defaults to 'telegraf'.                                                                             	|
 | ServiceDisplayName 	| String 	| Telegraf service display name. Defaults to 'Telegraf'.                                                                     	|
 | LogPath            	| String 	| Path to log file. Defaults to 'C:\InstallTelegraf.log'.                                                                    	|

@@ -28,10 +28,10 @@
 .OUTPUTS
   Log file stored in C:\TelegrafInstall.log or path specified with LogPath parameter
 .NOTES
-  Version:				1.4.1
+  Version:				1.5
   Author:				tigattack
   Modification Date:	16/09/2021
-  Purpose/Change:		Minor refactoring for best practices.
+  Purpose/Change:		InstallService default $false.
 .EXAMPLE
   InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
 #>
@@ -48,7 +48,7 @@ param (
 	[string]$telegrafDest = 'C:\Program Files\Telegraf',
 
 	[Parameter(Position=2,Mandatory = $False)]
-	[switch]$InstallService = $true,
+	[switch]$InstallService,
 
 	[Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch ' '})]
 	[string]$ServiceName = 'telegraf',
