@@ -28,10 +28,10 @@
 .OUTPUTS
   Log file stored in C:\TelegrafInstall.log or path specified with LogPath parameter
 .NOTES
-  Version:				1.4
+  Version:				1.4.1
   Author:				tigattack
-  Modification Date:	10/05/2021
-  Purpose/Change:		Improve ShouldProcess handling and fix minor issues.
+  Modification Date:	16/09/2021
+  Purpose/Change:		Minor refactoring for best practices.
 .EXAMPLE
   InstallTelegraf.ps1 -Source \\path\to\share -Destination C:\custom\path -LogPath C:\Windows\TEMP\InstallTelegraf.log
 #>
@@ -45,19 +45,19 @@ param (
 
 	[Alias('Destination')]
 	[Parameter(Position=1,Mandatory = $False)][ValidateNotNullOrEmpty()]
-	[string]$telegrafDest = "C:\Program Files\Telegraf",
+	[string]$telegrafDest = 'C:\Program Files\Telegraf',
 
 	[Parameter(Position=2,Mandatory = $False)]
 	[switch]$InstallService = $true,
 
-	[Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch " "})]
-	[string]$ServiceName = "telegraf",
+	[Parameter(Position=3,Mandatory = $False)][ValidateScript({$_ -notmatch ' '})]
+	[string]$ServiceName = 'telegraf',
 
 	[Parameter(Position=4,Mandatory = $False)][ValidateNotNullOrEmpty()]
-	[string]$ServiceDisplayName = "Telegraf",
+	[string]$ServiceDisplayName = 'Telegraf',
 
 	[Parameter(Position=5,Mandatory = $False)][ValidateNotNullOrEmpty()]
-	[string]$LogPath = "C:\InstallTelegraf.log"
+	[string]$LogPath = 'C:\InstallTelegraf.log'
 )
 
 # Configure
@@ -85,9 +85,9 @@ $telegrafConfDest = @{
 }
 
 $copyMsg = @{
-	noMatch = "File does not match source: ";
-	noExist = "File does not exist: ";
-	match = "File exists and matches source. Ignoring: "
+	noMatch = 'File does not match source: ';
+	noExist = 'File does not exist: ';
+	match = 'File exists and matches source. Ignoring: '
 }
 
 $created = 0
@@ -105,17 +105,16 @@ Catch {
 # Check files and copy/overwrite if necessary.
 Try {
 
-	Write-Verbose "==== Testing base configuration ===="
+	Write-Verbose '==== Testing base configuration ===='
 
 	## Check if Telegraf destination directory exists
 	If ( -not ($telegrafDest | Test-Path)) {
 
 		If($PSCmdlet.ShouldProcess(
-			"Performing the operation `"New-Item -ItemType Directory`" on targets `"$telegrafDest`" and `"$telegrafConfDestDir`".",
-			$env:computername,
-			"Create destination directories")
-		)
-		{
+				"Performing the operation `"New-Item -ItemType Directory`" on targets `"$telegrafDest`" and `"$telegrafConfDestDir`".",
+				$env:computername,
+				'Create destination directories')
+		) {
 			Write-Verbose "Directory does not exist: $telegrafDest"
 			Write-Verbose "Creating: $telegrafDest"
 			Write-Verbose "Creating: $telegrafConfDestDir"
@@ -136,10 +135,9 @@ Try {
 		# Overwrite agent if no match
 		If ( -not $binaryMatch ) {
 			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.binary,
-				"Update")
-			)
-			{
+					$telegrafConfDest.binary,
+					'Update')
+			) {
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.binary)"
 				Write-Verbose "Copying: $($telegrafConfSource.binary)"
 				Copy-Item -Path $telegrafConfSource.binary -Destination $telegrafConfDest.binary -Force
@@ -156,10 +154,9 @@ Try {
 	Else {
 		# Copy agent if no exist
 		If($PSCmdlet.ShouldProcess(
-			$telegrafConfDest.binary,
-			"Copy")
-			)
-		{
+				$telegrafConfDest.binary,
+				'Copy')
+		) {
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.binary)"
 			Write-Verbose "Copying: $($telegrafConfSource.binary)"
 			Copy-Item -Path $telegrafConfSource.binary -Destination $telegrafConfDest.binary
@@ -174,10 +171,9 @@ Try {
 		# Overwrite base config if no match
 		If ( -not ($baseConfMatch)) {
 			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.base,
-				"Update")
-				)
-			{
+					$telegrafConfDest.base,
+					'Update')
+			) {
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.base)"
 				Write-Verbose "Copying: $($telegrafConfSource.base)"
 				Copy-Item -Path ($telegrafConfSource.base) -Destination $telegrafConfDest.base -Force
@@ -194,10 +190,9 @@ Try {
 	## Copy base config if no exist
 	Else {
 		If($PSCmdlet.ShouldProcess(
-			$telegrafConfDest.base,
-			"Copy")
-			)
-		{
+				$telegrafConfDest.base,
+				'Copy')
+		) {
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.base)"
 			Write-Verbose "Copying: $($telegrafConfSource.base)"
 			Copy-Item -Path ($telegrafConfSource.base) -Destination $telegrafConfDest.base
@@ -207,15 +202,15 @@ Try {
 
 	## Check if system metrics config exists and matches source
 	If ($telegrafConfDest.sysMetrics | Test-Path ) {
-		$sysMetricsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.sysMetrics)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.sysMetrics)).Hash
+		$sysMetricsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.sysMetrics)).Hash -match `
+		(Get-FileHash -Algorithm SHA256 ($telegrafConfSource.sysMetrics)).Hash
 
 		# Overwrite system metrics config if no match
 		If ( -not ($sysMetricsConfMatch)) {
 			If($PSCmdlet.ShouldProcess(
-				$telegrafConfDest.sysMetrics,
-				"Update")
-				)
-			{
+					$telegrafConfDest.sysMetrics,
+					'Update')
+			) {
 				Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.sysMetrics)"
 				Write-Verbose "Copying: $($telegrafConfSource.sysMetrics)"
 				Copy-Item -Path ($telegrafConfSource.sysMetrics) -Destination $telegrafConfDest.sysMetrics -Force
@@ -232,10 +227,9 @@ Try {
 	## Copy system metrics config if no exist
 	Else {
 		If($PSCmdlet.ShouldProcess(
-			$telegrafConfDest.sysMetrics,
-			"Copy")
-			)
-		{
+				$telegrafConfDest.sysMetrics,
+				'Copy')
+		) {
 			Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.sysMetrics)"
 			Write-Verbose "Copying: $($telegrafConfSource.sysMetrics)"
 			Copy-Item -Path ($telegrafConfSource.sysMetrics) -Destination $telegrafConfDest.sysMetrics
@@ -251,22 +245,21 @@ Try {
 	If ($productType -ne '1') {
 
 		Write-Verbose 'OperatingSystem ProductType indicates machine is Server; evaluating further configuration.'
-		Write-Verbose "==== Testing optional configuration and candidacy ===="
+		Write-Verbose '==== Testing optional configuration and candidacy ===='
 
 		## Check if machine is DC, config exists, and config matches source
 		## If Win32_OperatingSystem.ProductType indicates Domain Controller
-		If ($productType -eq "2") {
-			Write-Verbose "Machine is candidate for AD DS config."
+		If ($productType -eq '2') {
+			Write-Verbose 'Machine is candidate for AD DS config.'
 
 			## Domain Controller config
 			If ($telegrafConfDest.adds | Test-Path) {
 				$addsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.adds)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.adds)).Hash
 				If ( -not $addsConfMatch ) {
 					If($PSCmdlet.ShouldProcess(
-						$telegrafConfDest.adds,
-						"Update")
-						)
-					{
+							$telegrafConfDest.adds,
+							'Update')
+					) {
 						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.adds)"
 						Write-Verbose "Copying: $($telegrafConfSource.adds)"
 						Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds -Force
@@ -283,10 +276,9 @@ Try {
 			Else {
 
 				If($PSCmdlet.ShouldProcess(
-					$telegrafConfDest.adds,
-					"Copy")
-					)
-				{
+						$telegrafConfDest.adds,
+						'Copy')
+				) {
 					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.adds)"
 					Write-Verbose "Copying: $($telegrafConfSource.adds)"
 					Copy-Item -Path $telegrafConfSource.adds -Destination $telegrafConfDest.adds
@@ -297,17 +289,16 @@ Try {
 
 		## Check if DNS service exists, config exists, and config matches source
 		If (Get-Service DNS -ErrorAction SilentlyContinue) {
-			Write-Verbose "Machine is candidate for DNS config."
+			Write-Verbose 'Machine is candidate for DNS config.'
 
 			## DNS config
 			If ($telegrafConfDest.dns | Test-Path) {
 				$dnsConfMatch = (Get-FileHash -Algorithm SHA256 ($telegrafConfDest.dns)).Hash -match (Get-FileHash -Algorithm SHA256 ($telegrafConfSource.dns)).Hash
 				If ( -not $dnsConfMatch ) {
 					If($PSCmdlet.ShouldProcess(
-						$telegrafConfDest.dns,
-						"Update")
-						)
-					{
+							$telegrafConfDest.dns,
+							'Update')
+					) {
 						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dns)"
 						Write-Verbose "Copying: $($telegrafConfSource.dns)"
 						Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns -Force
@@ -324,10 +315,9 @@ Try {
 			Else {
 
 				If($PSCmdlet.ShouldProcess(
-					$telegrafConfDest.dns,
-					"Copy")
-					)
-				{
+						$telegrafConfDest.dns,
+						'Copy')
+				) {
 					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dns)"
 					Write-Verbose "Copying: $($telegrafConfSource.dns)"
 					Copy-Item -Path $telegrafConfSource.dns -Destination $telegrafConfDest.dns
@@ -338,7 +328,7 @@ Try {
 
 		## Check if DFSR service exists, config exists, and config matches source
 		If (Get-Service DFSR -ErrorAction SilentlyContinue) {
-			Write-Verbose "Machine is candidate for DFSR config."
+			Write-Verbose 'Machine is candidate for DFSR config.'
 
 			## DFSR config
 			If ($telegrafConfDest.dfsr | Test-Path ) {
@@ -347,10 +337,9 @@ Try {
 
 				If ( -not $dfsrConfMatch ) {
 					If($PSCmdlet.ShouldProcess(
-						$telegrafConfDest.dfsr,
-						"Update")
-						)
-					{
+							$telegrafConfDest.dfsr,
+							'Update')
+					) {
 						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsr)"
 						Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
 						Copy-Item -Path $telegrafConfSource.dfsr -Destination $telegrafConfDest.dfsr -Force
@@ -367,10 +356,9 @@ Try {
 			Else {
 
 				If($PSCmdlet.ShouldProcess(
-					$telegrafConfDest.dfsr,
-					"Copy")
-					)
-				{
+						$telegrafConfDest.dfsr,
+						'Copy')
+				) {
 					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsr)"
 					Write-Verbose "Copying: $($telegrafConfDest.dfsr)"
 					Copy-Item -Path ($telegrafConfSource.dfsr) -Destination "$telegrafConfDestDir\"
@@ -381,7 +369,7 @@ Try {
 
 		## Check if DFSN service exists, config exists, and config matches source
 		If (Get-Service Dfs -ErrorAction SilentlyContinue) {
-			Write-Verbose "Machine is candidate for DFSN config."
+			Write-Verbose 'Machine is candidate for DFSN config.'
 
 			## DFSN config
 			If ($telegrafConfDest.dfsn | Test-Path) {
@@ -389,10 +377,9 @@ Try {
 				If ( -not $dfsnConfMatch ) {
 
 					If($PSCmdlet.ShouldProcess(
-						$telegrafConfDest.dfsn,
-						"Update")
-						)
-					{
+							$telegrafConfDest.dfsn,
+							'Update')
+					) {
 						Write-Verbose "$($copyMsg.noMatch) $($telegrafConfDest.dfsn)"
 						Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
 						Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn -Force
@@ -409,10 +396,9 @@ Try {
 			Else {
 
 				If($PSCmdlet.ShouldProcess(
-					$telegrafConfDest.dfsn,
-					"Copy")
-					)
-				{
+						$telegrafConfDest.dfsn,
+						'Copy')
+				) {
 					Write-Verbose "$($copyMsg.noExist) $($telegrafConfDest.dfsn)"
 					Write-Verbose "Copying: $($telegrafConfSource.dfsn)"
 					Copy-Item -Path $telegrafConfSource.dfsn -Destination $telegrafConfDest.dfsn
@@ -430,18 +416,17 @@ Catch {
 # Test config if anything has changed
 If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 	If($PSCmdlet.ShouldProcess(
-		"$telegrafDest\*",
-		"Test configuration")
-		)
-	{
-		Write-Verbose "Testing Telegraf config."
+			"$telegrafDest\*",
+			'Test configuration')
+	) {
+		Write-Verbose 'Testing Telegraf config.'
 		Try {
 			# Run test
 			(& $telegrafConfDest.binary --config $telegrafConfDest.base --config-directory $telegrafConfDestDir --test) 2>&1 | Write-Debug
 
 			# If test success
 			If ($LastExitCode -eq '0') {
-				Write-Verbose "Telegraf config test succeeded."
+				Write-Verbose 'Telegraf config test succeeded.'
 			}
 			# If test not success
 			Else {
@@ -458,14 +443,14 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 	## If config test success but service not exist
 	If (($LastExitCode -eq '0') -and ($InstallService -eq $true) -and (-not (Get-Service $ServiceName -ErrorAction SilentlyContinue))) {
 		If($PSCmdlet.ShouldProcess(
-			$env:computername,
-			"Install service")
-			)
-		{
+				$env:computername,
+				'Install service')
+		) {
 			Write-Output "Installing and starting '$ServiceName' service."
 			# Install service
 			Try {
-				(& $telegrafConfDest.binary --service install --service-name=$ServiceName --service-display-name="$ServiceDisplayName" --config $telegrafConfDest.base --config-directory $telegrafConfDestDir) 2>&1 | Write-Debug
+				(& $telegrafConfDest.binary --service install --service-name=$ServiceName --service-display-name="$ServiceDisplayName" `
+					--config $telegrafConfDest.base --config-directory $telegrafConfDestDir) 2>&1 | Write-Debug
 				$created += 1
 			}
 			Catch {
@@ -475,10 +460,9 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 		}
 
 		If($PSCmdlet.ShouldProcess(
-			$ServiceName,
-			"Start-Service")
-			)
-		{
+				$ServiceName,
+				'Start-Service')
+		) {
 			# Start service
 			Try {
 				Start-Service $ServiceName
@@ -493,10 +477,9 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 	## If config test success and service exist
 	Elseif (($LastExitCode -eq '0') -and (Get-Service $ServiceName -ErrorAction SilentlyContinue)) {
 		If($PSCmdlet.ShouldProcess(
-			$ServiceName,
-			"Restart service")
-			)
-		{
+				$ServiceName,
+				'Restart service')
+		) {
 			Write-Verbose "Restarting '$ServiceName' service."
 			Try {
 				Restart-Service $ServiceName
@@ -516,9 +499,9 @@ If (($created -gt 0) -or ($updated -gt 0) -or ($WhatIfPreference -eq $true)) {
 			'Ignored' = $ignored
 		}
 		Write-Output "`nSuccessfully completed. Status:"
-			$($result.Keys |
-			Select-Object @{Label='Action';Expression={$_}},@{Label='Count';Expression={$result.$_}} |
-			Format-Table -AutoSize)
+		$($result.Keys |
+				Select-Object @{Label='Action';Expression={$_}},@{Label='Count';Expression={$result.$_}} |
+				Format-Table -AutoSize)
 	}
 }
 
